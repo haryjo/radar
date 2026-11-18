@@ -1,0 +1,34 @@
+# Versions bornées à la version majeure testée : une nouvelle version majeure (souvent incompatible)
+# ne peut plus être installée par surprise lors d'un build Docker.
+
+# API et planification
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+sse-starlette>=2.1,<4
+pydantic>=2.8,<3
+pydantic-settings>=2.4,<3
+apscheduler>=3.10,<4
+watchdog>=4.0,<8
+python-frontmatter>=1.1,<2
+httpx>=0.27,<1
+cryptography>=42,<51
+
+# Agents et LLM
+langgraph>=1.0,<2
+langgraph-checkpoint-sqlite>=2.0,<4
+langchain-core>=1.0,<2
+langchain-openai>=1.0,<2
+langchain-anthropic>=1.0,<2
+
+# MCP : la version 2 du SDK renomme FastMCP (incompatible), on reste en 1.x
+mcp>=1.25,<2
+
+# Recherche et lecture web
+ddgs>=9.0,<10
+trafilatura>=2.0,<3
+
+# RAG (100 % local, sans torch)
+fastembed>=0.5,<1
+rank-bm25>=0.2.2,<1
+flashrank>=0.2.9,<1
+numpy>=1.26,<3

@@ -1,0 +1,73 @@
+name: radar
+
+# Configuration commune à l'API et au serveur MCP (même image, construite une seule fois).
+x-backend: &backend
+  image: radar-backend:local
+  env_file: .env
+  environment:
+    CONFIG_DIR: /config
+    DATA_DIR: /data
+    MODELS_DIR: /models
+    MCP_URL: http://mcp:8001/mcp
+    API_URL: http://api:8000
+  volumes:
+    - ./config:/config            # fichiers .md éditables depuis l'hôte
+    - radar-data:/data            # SQLite, index du profil, rapports, checkpoints
+    - radar-models:/models        # modèles d'embeddings et de reranking (téléchargés une fois)
+  restart: unless-stopped
+
+services:
+  api:
+    <<: *backend
+    build: ./backend              # seule l'API construit l'image ; le serveur MCP la réutilise
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"               # documentation Swagger : http://localhost:8000/docs
+    depends_on:
+      mcp:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+
+  mcp:
+    <<: *backend
+    pull_policy: never            # image locale construite par le service api
+    command: python -m mcp_server.server
+    ports:
+      - "8001:8001"               # pour brancher Claude Desktop ou MCP Inspector
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('localhost', 8001), 2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  web:
+    build: ./frontend
+    environment:
+      API_INTERNAL_URL: http://api:8000   # le navigateur passe par /api sur le port 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # LLM local optionnel : docker compose --profile local-llm up -d
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["local-llm"]
+    volumes:
+      - ollama-models:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+volumes:
+  radar-data:
+  radar-models:
+  ollama-models:

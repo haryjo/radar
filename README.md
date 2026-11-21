@@ -11,6 +11,22 @@ trafilatura, fastembed, FlashRank, SQLite, Next.js 16, Tailwind 4.
 
 ---
 
+## Aperçu
+
+![Tableau de bord des offres](docs/screenshots/offres-light.png)
+
+| Mode sombre | Détail d'une veille |
+|---|---|
+| ![Offres en mode sombre](docs/screenshots/offres-dark.png) | ![Offres trouvées par une veille](docs/screenshots/veille-detail.png) |
+| **Exécution suivie en direct** | **Recherche express dans l'assistant** |
+| ![Journal et entonnoir d'une exécution](docs/screenshots/execution-light.png) | ![Recherche express par le chat](docs/screenshots/assistant.png) |
+| **Veilles Markdown** | **Choix des modèles et routage** |
+| ![Liste des veilles](docs/screenshots/veilles.png) | ![Page Modèles](docs/screenshots/modeles.png) |
+
+Les captures ont été prises avec des données de démonstration.
+
+---
+
 ## Démarrage rapide
 
 ```bash
